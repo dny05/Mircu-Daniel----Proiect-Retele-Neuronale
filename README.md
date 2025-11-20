@@ -170,3 +170,11 @@ suspension_setup_evaluator/
 - [ ] Documentație actualizată în README + `data/README.md`
 
 ---
+
+##  7. Rulare
+python -m venv venv
+venv\Scripts\activate
+pip install --upgrade pip
+pip install -r requirements.txt
+python src/preprocessing.py
+streamlit run app.py
