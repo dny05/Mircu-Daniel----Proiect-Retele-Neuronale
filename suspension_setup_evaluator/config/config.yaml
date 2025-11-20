@@ -1,0 +1,99 @@
+# Configuration for Suspension Setup Evaluator
+
+# Data paths
+paths:
+  raw_data: "data/raw"
+  processed_data: "data/processed"
+  models: "data/models"
+  logs: "data/logs"
+
+# CSV column names
+columns:
+  timestamp: "elapse_time"
+  suspension:
+    - "susp_fl"  # Front Left
+    - "susp_fr"  # Front Right
+    - "susp_rl"  # Rear Left
+    - "susp_rr"  # Rear Right
+  acceleration:
+    - "acc_x"
+    - "acc_y"
+    - "acc_z"
+  rotation:
+    - "rot_x"
+    - "rot_y"
+    - "rot_z"
+
+# Preprocessing parameters
+preprocessing:
+  # Butterworth filter parameters
+  butterworth:
+    order: 4
+    cutoff_frequency: 10.0  # Hz
+    sampling_rate: 100.0     # Hz
+  
+  # Normalization method: 'standardize' or 'minmax'
+  normalization: "standardize"
+  
+  # Window size for feature extraction (in samples)
+  window_size: 200
+  window_overlap: 0.5  # 50% overlap
+
+# Feature extraction parameters
+features:
+  statistical:
+    - "mean"
+    - "std"
+    - "min"
+    - "max"
+    - "rms"
+    - "peak_to_peak"
+  
+  frequency_domain: false  # Enable FFT features (optional)
+  
+  # Total expected features: ~30
+  # (6 statistical × 5 channels = 30 features per window)
+
+# Training parameters
+training:
+  batch_size: 32
+  epochs: 100
+  learning_rate: 0.001
+  validation_split: 0.2
+  early_stopping_patience: 15
+  
+  # Data augmentation (optional)
+  augmentation: false
+
+# Model save settings
+model:
+  save_best_only: true
+  checkpoint_frequency: 10  # epochs
+
+# Evaluation thresholds
+evaluation:
+  # Classification threshold for oversteer/understeer
+  classification_threshold: 0.5
+  
+  # Minimum confidence for recommendations
+  min_confidence: 0.6
+  
+  # Setup recommendation rules
+  recommendations:
+    understeer:
+      front_camber: "increase"  # More negative camber
+      front_toe: "increase_toe_out"
+      rear_camber: "decrease"
+      message: "Understeer detectat - crește camber față, toe-out față"
+    
+    oversteer:
+      front_camber: "decrease"
+      front_toe: "decrease_toe_out"
+      rear_camber: "increase"
+      message: "Oversteer detectat - crește camber spate, reduce toe-out față"
+
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  save_to_file: true

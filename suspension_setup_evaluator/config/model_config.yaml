@@ -1,0 +1,78 @@
+# Neural Network Model Configurations
+
+# Classifier Model (Understeer/Oversteer Detection)
+classifier:
+  name: "OversteerUndersteerClassifier"
+  architecture:
+    input_size: 30  # Number of features per window
+    hidden_layers:
+      - 64
+      - 32
+      - 16
+    output_size: 2  # Binary classification (understeer, oversteer)
+    dropout: 0.3
+    activation: "relu"
+    output_activation: "softmax"
+  
+  loss: "cross_entropy"
+  optimizer: "adam"
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+
+# Regressor Model (Virtual Suspension Sensor)
+regressor:
+  name: "SuspensionVirtualSensor"
+  architecture:
+    input_size: 18  # Acceleration (3) + Rotation (3) features × statistical measures
+    hidden_layers:
+      - 32
+      - 24
+      - 16
+    output_size: 4  # Predicted suspension travel (FL, FR, RL, RR)
+    dropout: 0.2
+    activation: "relu"
+    output_activation: "linear"
+  
+  loss: "mse"  # Mean Squared Error
+  optimizer: "adam"
+  metrics:
+    - "mae"  # Mean Absolute Error
+    - "rmse"  # Root Mean Squared Error
+    - "r2_score"
+
+# Advanced configurations
+advanced:
+  # Weight initialization
+  weight_init: "xavier_uniform"
+  
+  # Batch normalization
+  use_batch_norm: true
+  
+  # Learning rate scheduling
+  lr_scheduler:
+    enabled: true
+    type: "reduce_on_plateau"  # or "step", "exponential"
+    factor: 0.5
+    patience: 10
+    min_lr: 1.0e-6
+  
+  # Gradient clipping
+  gradient_clip:
+    enabled: true
+    max_norm: 1.0
+  
+  # Early stopping
+  early_stopping:
+    enabled: true
+    monitor: "val_loss"
+    patience: 15
+    min_delta: 0.001
+
+# Ensemble configuration (optional)
+ensemble:
+  enabled: false
+  n_models: 3
+  voting: "soft"  # 'soft' or 'hard' for classification
